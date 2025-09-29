@@ -1,0 +1,17 @@
+services:
+  registry:
+    restart: always
+    image: registry:2
+    ports:
+      - 5005:5000
+    volumes:
+      - /home/orangepi/docker-local-hub/registry:/var/lib/registry
+      - /etc/ssl/docrepo:/certs
+      - /home/orangepi/docker-local-hub/config.yml:/etc/docker/registry/config.yml:ro
+  ui:
+    build: .
+    ports:
+      - "8888:3000"
+    environment:
+      REGISTRY_URL: ${REGISTRY_URL}
+
