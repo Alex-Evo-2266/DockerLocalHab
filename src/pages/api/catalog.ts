@@ -24,7 +24,11 @@ export default async function handler(
     }
     const data: CatalogResponse = await response.json();
     res.status(200).json(data);
-  } catch (err: any) {
-    res.status(500).json({ error: err.message });
+  }  catch (err: unknown) {
+    if (err instanceof Error) {
+      res.status(500).json({ error: err.message });
+    } else {
+      console.error(String(err));
+    }
   }
 }

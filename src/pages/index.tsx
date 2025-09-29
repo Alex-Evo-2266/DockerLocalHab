@@ -29,7 +29,13 @@ export default function Home() {
           } catch (err) { console.error(err); }
         }
         setRepoTags(allRepoTags);
-      } catch (err: any) { setError(err.message); }
+      }  catch (err: unknown) {
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          console.error(String(err));
+        }
+      }
       finally { setLoading(false); }
     };
     fetchData();
