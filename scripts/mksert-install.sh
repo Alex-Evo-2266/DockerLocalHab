@@ -40,6 +40,10 @@ case "$DISTRO" in
         ;;
 esac
 
+# Определяем архитектуру
+ARCH=$(uname -m)
+echo "🔎 Обнаружена архитектура: $ARCH"
+
 # Получаем последнюю версию mkcert
 LATEST_VERSION=$(curl -s https://api.github.com/repos/FiloSottile/mkcert/releases/latest | grep tag_name | cut -d '"' -f 4)
 if [ -z "$LATEST_VERSION" ]; then
@@ -48,8 +52,25 @@ if [ -z "$LATEST_VERSION" ]; then
 fi
 echo "📦 Скачиваем mkcert $LATEST_VERSION"
 
+# Выбираем бинарник в зависимости от архитектуры
+case "$ARCH" in
+    x86_64)
+        FILE="mkcert-v${LATEST_VERSION#v}-linux-amd64"
+        ;;
+    aarch64)
+        FILE="mkcert-v${LATEST_VERSION#v}-linux-arm64"
+        ;;
+    armv7l|armhf)
+        FILE="mkcert-v${LATEST_VERSION#v}-linux-arm"
+        ;;
+    *)
+        echo "❌ Архитектура $ARCH не поддерживается!"
+        exit 1
+        ;;
+esac
+
 # Скачиваем бинарник
-curl -L -o /usr/local/bin/mkcert https://github.com/FiloSottile/mkcert/releases/download/$LATEST_VERSION/mkcert-v${LATEST_VERSION#v}-linux-amd64
+curl -L -o /usr/local/bin/mkcert https://github.com/FiloSottile/mkcert/releases/download/$LATEST_VERSION/$FILE
 
 # Делаем исполняемым
 chmod +x /usr/local/bin/mkcert
