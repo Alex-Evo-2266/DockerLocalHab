@@ -21,7 +21,7 @@ export default function Home() {
         const allRepoTags: RepoTag[] = [];
         for (const repo of catalogData.repositories) {
           try {
-            const tagsRes = await fetch(`/api/tags/${repo}`);
+            const tagsRes = await fetch(`/api/tags/${encodeURIComponent(repo)}`);
             const tagsData: TagsResponse & { error?: string } = await tagsRes.json();
             if (tagsData.tags) {
               tagsData.tags.forEach(tag => allRepoTags.push({ repository: repo, tag }));
